@@ -1,6 +1,12 @@
 proxy = require "http-proxy"
 
 routes = {}
+   "": 
+      host: "localhost"
+      port: "80"
+   "quickconnect": 
+      host: "localhost"
+      port: "3000"
 
 server = proxy.createServer (req, res, proxy) ->
    urlParts = req.url.split "/"
