@@ -40,10 +40,9 @@ namespace :upstart do
       elsif isntRoot? then $stderr.puts "Skipping upstart install (must be root)..."
       else 
          dirname = File.dirname(__FILE__)
-         puts dirname
-         file = dirname + "config/upstart.conf"
-         puts file
-         `ln -s config/upstart.conf /etc/init/illuminate-reverse-proxy.conf` 
+         file = dirname + "/config/upstart.conf"
+
+         `ln -s #{file} /etc/init/illuminate-reverse-proxy.conf` 
       end
    end
 
