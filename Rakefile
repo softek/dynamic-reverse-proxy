@@ -1,3 +1,5 @@
+SERVICE_NAME = 'illuminate-reverse-proxy'
+
 def inWindows?
    ENV['OS'] == 'Windows_NT'
 end
@@ -48,7 +50,7 @@ namespace :upstart do
          dirname = File.dirname(__FILE__)
          file = dirname + "/config/upstart.conf"
 
-         `ln -s #{file} /etc/init/illuminate-reverse-proxy.conf` 
+         `ln -s #{file} /etc/init/#{SERVICE_NAME}.conf` 
       end
    end
 
@@ -56,6 +58,6 @@ namespace :upstart do
    task :uninstall do
       if inWindows? then $stderr.puts "Skipping upstart uninstall (in Windows)..."
       elsif isntRoot? then $stderr.puts "Skipping upstart uninstall (must be root)..."
-      else `rm /etc/init/illuminate-reverse-proxy.conf` end
+      else `rm /etc/init/#{SERVICE_NAME}.conf` end
    end
 end
