@@ -2,6 +2,10 @@ def inWindows?
    ENV['OS'] == 'Windows_NT'
 end
 
+def isRoot? 
+   Process.uid == 0
+end
+
 task :default do
    puts `rake -D`
 end
@@ -32,13 +36,15 @@ end
 namespace :upstart do
    desc "Installs the application as a service using upstart."
    task :install do
-      if inWindows? then $stderr.puts "Skipping upstart install in Windows..."
+      if inWindows? then $stderr.puts "Skipping upstart install (in Windows)..."
+      elsif isRoot? then $stderr.puts "Skipping upstart install (must be root)..."
       else `ln -s config/upstart.conf /etc/init/illuminate-reverse-proxy.conf` end
    end
 
    desc "Uninstalls upstart service hooks."
    task :uninstall do
-      if inWindows? then $stderr.puts "Skipping upstart uninstall in Windows..."
+      if inWindows? then $stderr.puts "Skipping upstart uninstall (in Windows)..."
+      elsif isRoot? then $stderr.puts "Skipping upstart uninstall (must be root)..."
       else `rm /etc/init/illuminate-reverse-proxy.conf` end
    end
 end
