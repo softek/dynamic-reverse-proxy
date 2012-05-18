@@ -16,6 +16,12 @@ task :install do
    Rake::Task['upstart:install'].execute
 end
 
+desc "Uninstalls npm, upstart"
+task :uninstall do
+   Rake::Task['npm:uninstall'].execute
+   Rake::Task['upstart:uninstall'].execute
+end
+
 namespace :npm do
    desc "Installs node package dependencies."
    task :install do
