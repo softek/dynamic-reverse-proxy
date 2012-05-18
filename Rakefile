@@ -38,7 +38,13 @@ namespace :upstart do
    task :install do
       if inWindows? then $stderr.puts "Skipping upstart install (in Windows)..."
       elsif isntRoot? then $stderr.puts "Skipping upstart install (must be root)..."
-      else `ln -s config/upstart.conf /etc/init/illuminate-reverse-proxy.conf` end
+      else 
+         dirname = File.dirname(__FILE__)
+         puts dirname
+         file = dirname + "config/upstart.conf"
+         puts file
+         `ln -s config/upstart.conf /etc/init/illuminate-reverse-proxy.conf` 
+      end
    end
 
    desc "Uninstalls upstart service hooks."
