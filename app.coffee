@@ -1,6 +1,6 @@
 proxy = require "http-proxy"
 
-routes = {}
+routes = 
    "": 
       host: "localhost"
       port: "80"
@@ -16,4 +16,4 @@ server = proxy.createServer (req, res, proxy) ->
    console.log "Sending #{req.url} to #{host.host}:#{host.port}..."
    proxy.proxyRequest req, res, host
 
-server.listen 8010
+server.listen 80
