@@ -24,6 +24,9 @@ task :uninstall do
    Rake::Task['upstart:uninstall'].execute
 end
 
+desc "Restarts the service"
+task :restart => ["upstart:restart"] do end
+
 namespace :npm do
    desc "Installs node package dependencies."
    task :install do
@@ -59,5 +62,12 @@ namespace :upstart do
       if inWindows? then $stderr.puts "Skipping upstart uninstall (in Windows)..."
       elsif isntRoot? then $stderr.puts "Skipping upstart uninstall (must be root)..."
       else `rm /etc/init/#{SERVICE_NAME}.conf` end
+   end
+
+   desc "Restarts the service."
+   task :restart do
+      if inWindows? then $stderr.puts "Skipping upstart restart (in Windows)..."
+      elsif isntRoot? then $stderr.puts "Skipping upstart restart (must be root)..."
+      else `initctl restart #{SERVICE_NAME}` end
    end
 end
