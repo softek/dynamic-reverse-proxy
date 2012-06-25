@@ -8,6 +8,12 @@ def isntRoot?
    Process.uid != 0
 end
 
+def initctl(method)
+   if inWindows? then $stderr.puts "Skipping upstart #{method} (in Windows)..."
+   elsif isntRoot? then $stderr.puts "Skipping upstart ${method} (must be root)..."
+   else `initctl #{method} #{SERVICE_NAME}` end
+end
+
 task :default do
    puts `rake -D`
 end
@@ -23,9 +29,6 @@ task :uninstall do
    Rake::Task['npm:uninstall'].execute
    Rake::Task['upstart:uninstall'].execute
 end
-
-desc "Restarts the service"
-task :restart => ["upstart:restart"] do end
 
 namespace :npm do
    desc "Installs node package dependencies."
@@ -54,6 +57,7 @@ namespace :upstart do
          file = dirname + "/config/upstart.conf"
 
          `ln -s #{file} /etc/init/#{SERVICE_NAME}.conf` 
+         initctl "start"
       end
    end
 
@@ -61,13 +65,23 @@ namespace :upstart do
    task :uninstall do
       if inWindows? then $stderr.puts "Skipping upstart uninstall (in Windows)..."
       elsif isntRoot? then $stderr.puts "Skipping upstart uninstall (must be root)..."
-      else `rm /etc/init/#{SERVICE_NAME}.conf` end
+      else 
+         `rm /etc/init/#{SERVICE_NAME}.conf` 
+      end
+   end
+
+   desc "Stops the service."
+   task :stop do
+      initctl "stop"
    end
 
    desc "Restarts the service."
    task :restart do
-      if inWindows? then $stderr.puts "Skipping upstart restart (in Windows)..."
-      elsif isntRoot? then $stderr.puts "Skipping upstart restart (must be root)..."
-      else `initctl restart #{SERVICE_NAME}` end
+      initctl "restart"
+   end
+
+   desc "Starts the service."
+   task :start do
+      initctl "start"
    end
 end
