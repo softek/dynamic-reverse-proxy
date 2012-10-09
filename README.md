@@ -25,7 +25,7 @@ To register the a host with the proxy:
 POST /register HTTP/1.1
 Host: localhost:80
 Content-Length: 26
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 {"path": "/", "port":1234}
 ```
 
@@ -37,8 +37,12 @@ To register another host:
 POST /register HTTP/1.1
 Host: localhost:80
 Content-Length: 30
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 {"path": "/test", "port":4321}
 ```
 
 Now, any request made to `http://localhost:80/test` will be sent to `http://localhost:4321/test`.
+
+### Wait, what about security? 
+
+Well, it's pretty lame (but functional) at the moment. Only requests originating from the same machine as the proxy are allowed to register.
