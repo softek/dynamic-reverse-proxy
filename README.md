@@ -26,6 +26,7 @@ POST /register HTTP/1.1
 Host: localhost:80
 Content-Length: 26
 Content-Type: application/json
+
 {"path": "/", "port":1234}
 ```
 
@@ -38,6 +39,7 @@ POST /register HTTP/1.1
 Host: localhost:80
 Content-Length: 30
 Content-Type: application/json
+
 {"path": "/test", "port":4321}
 ```
 
