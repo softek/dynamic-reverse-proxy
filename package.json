@@ -3,7 +3,7 @@
   "name": "dynamic-reverse-proxy",
   "version": "0.1.0",
   "repository": {
-    "url": "git://github.com/softek/dynamic-reverse-proxy"
+    "url": "git://github.com/softek/dynamic-reverse-proxy.git"
   },
   "dependencies": {
     "http-proxy": "0.8.3",
