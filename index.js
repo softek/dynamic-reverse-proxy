@@ -5,7 +5,7 @@ var DynamicProxy = require("./lib/dynamicProxy"),
     };
 
 module.exports = function (options) {
-   options = merge(defaults, options);
+   options = merge(defaults, options || {});
    return new DynamicProxy(options);
 };
 
