@@ -1,7 +1,9 @@
 var DynamicProxy = require("./lib/dynamicProxy"),
+    http = require("http"),
     defaults = {
        logger: require("winston"),
-       routes: {}
+       routes: {},
+       server: http.createServer()
     };
 
 module.exports = function (options) {
