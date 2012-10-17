@@ -1,16 +1,13 @@
 {
   "author": "Andrew Dunkman <andrew@dunkman.org>",
   "name": "dynamic-reverse-proxy",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "repository": {
     "url": "git://github.com/softek/dynamic-reverse-proxy.git"
   },
   "dependencies": {
-    "http-proxy": "0.8.3",
-    "winston": "0.6.2"
+    "http-proxy": "0.8.3"
   },
-  "devDependencies": {},
-  "optionalDependencies": {},
   "engines": {
     "node": "*"
   }

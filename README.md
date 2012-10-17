@@ -5,10 +5,12 @@ A reverse proxy built on [http-proxy](https://github.com/nodejitsu/node-http-pro
 ## Starting the server
 
 ```javascript
-var dynamicProxy = require("dynamic-reverse-proxy");
+var http = require("http"),
+    server = http.createServer(),
+    dynamicProxy = require("dynamic-reverse-proxy")(server);
 
-dynamicProxy().listen(port, function () {
-   console.log("Reverse Proxy started, listening on port " + port);
+server.listen(3000, function () {
+   console.log("Reverse Proxy started, listening on port 3000");
 });
 ```
 
@@ -23,28 +25,61 @@ To register the a host with the proxy:
 
 ```HTTP
 POST /register HTTP/1.1
-Host: localhost:80
+Host: localhost:3000
 Content-Length: 26
 Content-Type: application/json
 
 {"path": "/", "port":1234}
 ```
 
-Now, any request made to `http://localhost:80/` will be sent to `http://localhost:1234/`.
+Now, any request made to `http://localhost:3000/` will be sent to `http://localhost:1234/`.
 
 To register another host:
 
 ```HTTP
 POST /register HTTP/1.1
-Host: localhost:80
+Host: localhost:3000
 Content-Length: 30
 Content-Type: application/json
 
 {"path": "/test", "port":4321}
 ```
 
-Now, any request made to `http://localhost:80/test` will be sent to `http://localhost:4321/test`.
+Now, any request made to `http://localhost:3000/test` will be sent to `http://localhost:4321/test`.
 
 ### Wait, what about security? 
 
 Well, it's pretty lame (but functional) at the moment. Only requests originating from the same machine as the proxy are allowed to register.
+
+## Events
+
+The dynamic proxy object that is returned is an EventEmitter with the following events:
+
+ - `proxyError` is passed `(error, request, response)` and is emitted when:
+     - A request is sent to a known host but the request could not be proxied (likely the host was unreachable). The host is availabe at `request.host`. If no handler ends the response back to the original client, `500 Internal Server Error` will be returned.
+     - No host could be found to handle the request. In this case, the `error` will be `NOT_FOUND`. If no handler ends the response back to the original client, `501 Not Implemented` will be returned.
+
+ - `registerError` is passed `(error, request, response)` and is emitted when a request is sent to `/register` but it could not be handled correctly. Error will be one of the following:
+     - `FORBIDDEN` (not allowed)
+     - `METHOD_NOT_ALLOWED` (must be a POST)
+     - `BAD_REQUEST` (not parsable as JSON)
+     - `INCOMPLETE_REQUEST` (path and port were not supplied)
+
+ - `routeRegistered` is passed `(host)` and is emitted when a request is sent to `/register` and it was successful.
+
+## Methods
+
+ - `dynamicProxy.addRoutes(routes)` adds an object of routes in the following format:
+
+```JSON
+{
+   "": {
+      "path": "",
+      "port": 1234
+   },
+   "test": {
+      "path": "test",
+      "port": 4321
+   }
+}
+ ```
