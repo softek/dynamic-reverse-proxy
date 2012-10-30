@@ -7,10 +7,19 @@ A reverse proxy built on [http-proxy](https://github.com/nodejitsu/node-http-pro
 ```javascript
 var http = require("http"),
     server = http.createServer(),
-    dynamicProxy = require("dynamic-reverse-proxy")(server);
+    dynamicProxy = require("dynamic-reverse-proxy")();
+
+server.on("request", function (req, res) {
+  if (req.url.match(/^\/register/i)) {
+    proxy.registerRouteRequest(req, res);
+  }
+  else {
+    proxy.proxyRequest(req, res);
+  }
+});
 
 server.listen(3000, function () {
-   console.log("Reverse Proxy started, listening on port 3000");
+  console.log("Reverse Proxy started, listening on port 3000");
 });
 ```
 
@@ -26,10 +35,10 @@ To register the a host with the proxy:
 ```HTTP
 POST /register HTTP/1.1
 Host: localhost:3000
-Content-Length: 26
+Content-Length: 28
 Content-Type: application/json
 
-{"path": "/", "port":1234}
+{"prefix": "/", "port":1234}
 ```
 
 Now, any request made to `http://localhost:3000/` will be sent to `http://localhost:1234/`.
@@ -39,10 +48,10 @@ To register another host:
 ```HTTP
 POST /register HTTP/1.1
 Host: localhost:3000
-Content-Length: 30
+Content-Length: 32
 Content-Type: application/json
 
-{"path": "/test", "port":4321}
+{"prefix": "/test", "port":4321}
 ```
 
 Now, any request made to `http://localhost:3000/test` will be sent to `http://localhost:4321/test`.
@@ -73,12 +82,12 @@ The dynamic proxy object that is returned is an EventEmitter with the following 
 
 ```JSON
 {
-   "": {
-      "path": "",
+   "/": {
+      "prefix": "",
       "port": 1234
    },
-   "test": {
-      "path": "test",
+   "/test": {
+      "prefix": "test",
       "port": 4321
    }
 }
