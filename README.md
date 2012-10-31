@@ -64,8 +64,8 @@ Well, it's pretty lame (but functional) at the moment. Only requests originating
 
 The dynamic proxy object that is returned is an EventEmitter with the following events:
 
- - `proxyError` is passed `(error, request, response)` and is emitted when:
-     - A request is sent to a known host but the request could not be proxied (likely the host was unreachable). The host is availabe at `request.host`. If no handler ends the response back to the original client, `500 Internal Server Error` will be returned.
+ - `proxyError` is passed `(error, host, request, response)` and is emitted when:
+     - A request is sent to a known host but the request could not be proxied (likely the host was unreachable). If no handler ends the response back to the original client, `500 Internal Server Error` will be returned.
      - No host could be found to handle the request. In this case, the `error` will be `NOT_FOUND`. If no handler ends the response back to the original client, `501 Not Implemented` will be returned.
 
  - `registerError` is passed `(error, request, response)` and is emitted when a request is sent to `/register` but it could not be handled correctly. Error will be one of the following:
