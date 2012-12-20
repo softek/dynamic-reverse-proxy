@@ -1,7 +1,7 @@
 {
   "author": "Andrew Dunkman <andrew@dunkman.org>",
   "name": "dynamic-reverse-proxy",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "repository": {
     "url": "git://github.com/softek/dynamic-reverse-proxy.git"
   },
