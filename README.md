@@ -11,10 +11,10 @@ var http = require("http"),
 
 server.on("request", function (req, res) {
   if (req.url.match(/^\/register/i)) {
-    proxy.registerRouteRequest(req, res);
+    dynamicProxy.registerRouteRequest(req, res);
   }
   else {
-    proxy.proxyRequest(req, res);
+    dynamicProxy.proxyRequest(req, res);
   }
 });
 
