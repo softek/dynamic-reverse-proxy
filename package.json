@@ -1,12 +1,34 @@
 {
   "author": "Andrew Dunkman <andrew@dunkman.org>",
   "name": "dynamic-reverse-proxy",
-  "version": "0.6.0",
+  "contributors": [{
+      "name": "Andrew Dunkman",
+      "email": "andrew@dunkman.org"
+    },
+    {
+      "name": "Joe Andaverde"
+    },
+    {
+      "name": "Jeremy Sellars",
+      "email": "jeremy.sellars@softekinc.com"
+    }],
+  "license": "MIT",
+  "version": "0.7.0",
+  "scripts": {
+    "prepublish": "lein build-release"
+    },
   "repository": {
-    "url": "git://github.com/softek/dynamic-reverse-proxy.git"
+    "type": "git",
+    "url": "https://github.com/softek/dynamic-reverse-proxy"
   },
+  "bugs": {
+    "url": "https://github.com/softek/dynamic-reverse-proxy/issues"
+  },
+  "keywords": [
+    "reverse proxy"
+  ],
   "dependencies": {
-    "http-proxy": "1.1.4"
+    "http-proxy": "1.9.0"
   },
   "engines": {
     "node": "*"
