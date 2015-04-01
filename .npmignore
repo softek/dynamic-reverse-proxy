@@ -5,5 +5,7 @@ target
 out
 npm-debug.log
 lib/*
-!lib/dynamic-proxy.js
-!lib/dynamic-proxy.js.map
+!lib/debug/dynamic-proxy.js
+!lib/debug/dynamic-proxy.js.map
+!lib/release/dynamic-proxy.js
+!lib/release/dynamic-proxy.js.map
