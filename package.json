@@ -17,7 +17,7 @@
   "license": "MIT",
   "version": "0.7.0-alpha1",
   "scripts": {
-    "prepublish": "lein build-release"
+    "prepublish": "lein build-release & keybase dir sign"
   },
   "repository": {
     "type": "git",
