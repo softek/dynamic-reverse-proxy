@@ -7,7 +7,7 @@
 
 (defn route-for-uri [routes uri]
   (letfn [(route-matches [route]
-            (let [pfx (.-prefix route)]
+            (let [pfx (aget route "prefix")]
               (when (== 0 (.indexOf uri pfx))
                 route)))]
     (some route-matches routes)))
@@ -36,9 +36,9 @@
 
 (defn complete-route? [route]
   (and route
-    (not (blank? (.-prefix route)))
-    (integer? (.-port route))
-    (not= 0 (.-port route))))
+    (not (blank? (aget route "prefix")))
+    (integer? (aget route "port"))
+    (not= 0 (aget route "port"))))
 
 (defn get-routes [dproxy]
   (let [routes-atom (-> dproxy (aget "routes-atom"))]
@@ -49,11 +49,17 @@
         new-routes-kvs (mapcat #(vector (aget % "prefix") %) rs)]
     (swap! routes-atom #(apply assoc % new-routes-kvs))))
 
+(defn register-route! [dproxy route]
+  (aset route "prefix" (-> (aget route "prefix") normalize-prefix))
+  (aset route "host" "localhost")
+  (add-routes! dproxy [route])
+  (.emit dproxy "routeRegistered" route))
+
 (defn end-response
   ([res status-code]
     (end-response res status-code nil))
   ([res status-code data]
-    (when (.-writable res) 
+    (when (aget res "writable") 
       (aset res "statusCode" status-code)
       (when data
         (.write res (.stringify js/JSON data)))
@@ -69,9 +75,9 @@
         (or error-msg data))
       (success-result [route] #js {
         :message "Registered."
-        :host (.-host route)
-        :port (.-port route)
-        :prefix (.-prefix route)})]
+        :host (aget route "host")
+        :port (aget route "port")
+        :prefix (aget route "prefix")})]
       (let [remote-address (-> req .-connection .-remoteAddress)
             method (-> req .-method .toUpperCase)]
         (or (when (not= "127.0.0.1" remote-address)
@@ -84,7 +90,7 @@
                 (reg-status! {:code 400, :error-msg "BAD_REQUEST"})
                 (if-not (complete-route? route)
                   (reg-status! {:code 400, :error-msg "INCOMPLETE_REQUEST"})
-                  (do (.registerRoute dproxy route)
+                  (do (register-route! dproxy route)
                       (reg-status! {:code 200,
                                     :data (success-result route)}))))))))))
 
@@ -104,10 +110,10 @@
       (proxy-error dproxy "NOT_FOUND" req res {:code 501})
       (do
         (aset req "host" (.create js/Object route))
-        (let [target (str "http://" (.-host route) ":" (.-port route))]
-          (.setHeader res "x-served-by", (str target (.-prefix route)));
+        (let [target (str "http://" (aget route "host") ":" (aget route "port"))]
+          (.setHeader res "x-served-by", (str target (aget route "prefix")));
           (-> dproxy
-             .-proxy
+             (aget "proxy")
              (.web req, res, #js { :target target })))))))
 
 (defn longest-string-first [a b]
@@ -128,7 +134,7 @@
 
 ;; js interop
 
-(defn DynamicProxy []
+(defn ^:export DynamicProxy []
   (let [routes (atom (apply sorted-map-by longest-string-first []))
         proxy (.createProxyServer http-proxy #js {"xfwd" true})]
     (this-as dproxy
@@ -139,7 +145,7 @@
       dproxy)))
 
 (set-prototype! DynamicProxy
-  (.create js/Object (-> events.EventEmitter .-prototype)))
+  (.create js/Object (-> events (aget "EventEmitter") (aget "prototype"))))
 
 (set-prototype! DynamicProxy "addRoutes"
   (fn addRoutes [routes]
@@ -153,7 +159,7 @@
       (clj->js (get-routes dproxy)))))
 
 (set-prototype! DynamicProxy "registerRouteRequest"
-  (fn registerRouteRequest [req res]
+  (fn ^:export registerRouteRequest [req res]
     (this-as dproxy
       (register-route-request dproxy req res))))
 
@@ -165,12 +171,9 @@
 (set-prototype! DynamicProxy "registerRoute"
   (fn registerRoute [route]
     (this-as dproxy
-      (aset route "prefix" (-> (aget route "prefix") normalize-prefix))
-      (aset route "host" "localhost")
-      (add-routes! dproxy [route])
-      (.emit dproxy "routeRegistered" route))))
+      (register-route! dproxy route))))
 
 (defn -main []
-  (set! module.exports DynamicProxy))
+  (aset js/module "exports" DynamicProxy))
 
 (set! *main-cli-fn* -main)

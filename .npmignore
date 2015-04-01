@@ -4,4 +4,6 @@ target
 .nrepl-port
 out
 npm-debug.log
-lib/
+lib/*
+!lib/dynamic-proxy.js
+!lib/dynamic-proxy.js.map

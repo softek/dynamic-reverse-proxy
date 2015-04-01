@@ -1,4 +1,4 @@
-(defproject dynamic-reverse-proxy "0.7.0"
+(defproject dynamic-reverse-proxy "0.7.0-alpha1"
   :description "Dynamic reverse proxy"
   :url "http://github.com/softek/dynamic-reverse-proxy"
 
@@ -28,12 +28,17 @@
               :compiler {
                 :output-to "lib/dynamic-proxy.js"
                 :output-dir "lib"
-                :optimizations :simple
+                :optimizations :advanced
                 :source-map "lib/dynamic-proxy.js.map"
                 :pretty-print false
                 :preamble ["version.js"]
                 :target :nodejs
-                :externs []}}]}
+                :externs ["node_modules/closurecompiler-externs/events.js"
+                          "node_modules/closurecompiler-externs/stream.js"
+                          "node_modules/closurecompiler-externs/net.js"
+                          "node_modules/closurecompiler-externs/http.js"
+                          "node_modules/closurecompiler-externs/https.js"
+                          "externs/http-proxy.js"]}}]}
 
   :aliases {
     "build-release" ["do" "clean" ["cljsbuild" "once" "release"]]
