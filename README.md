@@ -2,8 +2,28 @@
 
 A reverse proxy built on [http-proxy](https://github.com/nodejitsu/node-http-proxy) that is configured by REST.
 
+[Dynamic-reverse-proxy](http://github.com/softek/dynamic-reverse-proxy) exposes several web apps on a single port so you can:
+* **Use the right language for the job.** Maybe you want to use the best parts of [Clojure](http://clojure.org/), [Node.js](https://nodejs.org/about/), [Erlang](http://www.erlang.org/), [Ruby](https://www.ruby-lang.org/).  Put each project on its own port and use dynamic-reverse-proxy to expose a unified front to the world.
+* **Partition parts of the web app for stability**.  Put experimental features in their own process and relay the traffic.
+* **Only bother with HTTPS in one place**.  You can expose HTTPS to the world, but your "behind the proxy" apps don't need to worry about HTTPS.
+
+##### Latest stable release: 0.6.0 [Doc](https://github.com/softek/dynamic-reverse-proxy/blob/0b770e23c59818fe514e41897f7bf609efff474b/README.md)
+`npm install dynamic-reverse-proxy`
+
+##### Latest unstable release: 0.7.0-alpha1
+`npm install dynamic-reverse-proxy@0.7.0-alpha1`
+
 ## Starting the server
 
+#### Stand-alone (available starting 0.7.0)
+```dos
+npm install dynamic-reverse-proxy
+cd node_modules\dynamic-reverse-proxy
+SET port=3000
+npm start
+```
+
+#### With code
 ```javascript
 var http = require("http"),
     server = http.createServer(),
@@ -92,3 +112,16 @@ The dynamic proxy object that is returned is an EventEmitter with the following 
    }
 }
  ```
+
+## Troubleshooting
+This package comes with both an optimized/minified "release" version, and a more-readable "debug" version.  To use the debug version, set `debug: true` in ./config.js.
+
+## Development
+
+### Roadmap
+* Allowing HOST-specific routes (`http://example.com/` gets a different route than `http://subdomain.example.com/` depending on the host header)
+* Requiring encryption for some routes (for example, force the `/login` route to use HTTPS)
+* Performance improvements for proxies with many routes. Before v0.7.0, the complexity was o(n) and O(n) because it uses the longest prefix that works.  This may become more important when certain areas of sites force HTTPS - that may use more routes, depending on your URL scheme.
+
+### Scripts
+* To set the version (in package.json, project.clj, resources/version.js): `lein set-version 0.x.x-alphaX`.  You can also `:dry-run true` to [see what changes would be made](https://github.com/pallet/lein-set-version#dry-run-mode).

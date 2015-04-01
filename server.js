@@ -13,5 +13,6 @@ server.on("request", function (req, res) {
  
 var port = process.env.port || 3000;
 server.listen(port, function () {
-  console.log("Reverse Proxy started, listening on port " + port);
+  console.log("Reverse Proxy started, listening on port " + port +
+              (dynamicProxy.debug ? " \x1b[33m(DEBUG build)\x1b[0m" : ""));
 });
