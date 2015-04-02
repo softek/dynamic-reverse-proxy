@@ -7,7 +7,9 @@ A reverse proxy built on [http-proxy](https://github.com/nodejitsu/node-http-pro
 * **Partition parts of the web app for stability**.  Put experimental features in their own process and relay the traffic.
 * **Only bother with HTTPS in one place**.  You can expose HTTPS to the world, but your "behind the proxy" apps don't need to worry about HTTPS.
 
-##### Latest stable release: 0.6.0 [Doc](https://github.com/softek/dynamic-reverse-proxy/blob/0b770e23c59818fe514e41897f7bf609efff474b/README.md)
+##### Latest stable release: 0.6.0
+[0.6.0 Documentation](https://github.com/softek/dynamic-reverse-proxy/blob/v0.6.0/README.md)
+
 `npm install dynamic-reverse-proxy`
 
 ##### Latest unstable release: 0.7.0-alpha2
