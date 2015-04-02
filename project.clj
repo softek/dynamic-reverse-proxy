@@ -1,4 +1,4 @@
-(defproject dynamic-reverse-proxy "0.7.0-alpha1"
+(defproject dynamic-reverse-proxy "0.7.0-alpha2"
   :description "Dynamic reverse proxy"
   :url "http://github.com/softek/dynamic-reverse-proxy"
 
@@ -11,6 +11,8 @@
             [lein-simpleton "1.3.0"]]
   :set-version
     {:updates [{:path "resources/version.js"}
+               {:path "README.md"
+                :search-regex #"Latest unstable release[^`]+`[^`]+"}
                {:path "package.json"
                 :search-regex #"\"version\"\s*:\s*\"(\\\"|[^\"])*\""}]} ;"
 
