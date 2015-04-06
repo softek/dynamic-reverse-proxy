@@ -22,13 +22,14 @@
     :builds [{:id "dev"
               :source-paths ["src"]
               :compiler {
-                :output-to "out/dev/dynamic-reverse-proxy.js"
-                :output-dir "out/dev"
+                :output-to "out/dev/dynamic-proxy.js"
+                :output-dir "out/dev/"
                 :optimizations :none
-                :source-map "out/dev/dynamic-reverse-proxy.js.map"
+                :source-map "out/dev/dynamic-proxy.js.map"
                 :pretty-print true
                 :preamble ["version.js"]
                 :target :nodejs
+                :main "com.softekinc.dynamic-reverse-proxy"
                 :externs []}}
              {:id "debug"
               :source-paths ["src"]

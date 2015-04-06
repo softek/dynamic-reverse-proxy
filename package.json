@@ -34,7 +34,8 @@
   },
   "devDependencies": {
     "closurecompiler-externs": "^1.0.4",
-    "keybase": "^0.7.7"
+    "keybase": "^0.7.7",
+    "source-map-support": "^0.2.10"
   },
   "engines": {
     "node": "*"

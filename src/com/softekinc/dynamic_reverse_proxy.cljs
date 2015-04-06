@@ -1,9 +1,13 @@
 (ns com.softekinc.dynamic-reverse-proxy
   (:require [cljs.nodejs :as nodejs]
+            [com.softekinc.proxy :refer [create-proxy]]
             [clojure.string :refer [blank?]]))
 
-(def http-proxy (nodejs/require "http-proxy"))
-(def events (nodejs/require "events"))
+(nodejs/enable-util-print!)
+
+(def require (js* "require"))
+
+(def events (require "events"))
 
 (defn route-for-uri [routes uri]
   (letfn [(route-matches [route]
@@ -136,7 +140,7 @@
 
 (defn ^:export DynamicProxy []
   (let [routes (atom (apply sorted-map-by longest-string-first []))
-        proxy (.createProxyServer http-proxy #js {"xfwd" true})]
+        proxy (create-proxy #js {"xfwd" true})]
     (this-as dproxy
       (.on proxy "error" (partial on-proxy-error dproxy))
       (doto dproxy
