@@ -9,12 +9,31 @@
 
 (def events (require "events"))
 
-(defn route-for-uri [routes uri]
-  (letfn [(route-matches [route]
-            (let [pfx (aget route "prefix")]
-              (when (== 0 (.indexOf uri pfx))
-                route)))]
-    (some route-matches routes)))
+#_(def Url
+  {:encrypted s/Bool
+   :host     s/Str
+   :path     s/Str})
+
+(defn url-matches-route?
+  "returns true when
+     (.-host route) is nil or is the same as (:host url))
+     AND (:path url) starts with (.-prefix route)
+
+   In both criteria, the string comparisons ignore case."
+  [{:keys [path host] :as url} route]
+  (boolean
+    (and
+      (let [route-host (.-host route)]
+        (or (nil? route-host)                            ; route-host = nil
+            (== 0 (.-length route-host))                 ; route-host = ""
+            (= route-host (.toLowerCase (or host ""))))) ; or host matches
+      (let [pfx (aget route "prefix")]
+        (.startsWith path pfx)))))                        ; path starts with prefix
+
+(defn route-for-url [routes url]
+  (->> routes
+       (filter (partial url-matches-route? url))
+       first))
 
 (defn- set-prototype!
   ([f prototype]
@@ -108,8 +127,16 @@
 
 (defn proxy-request [dproxy req res] 
   (let [uri (-> req .-url js/decodeURI .toLowerCase)
+        url {:path uri
+             :host (-> req .-headers .-host)
+             :encrypted (boolean (-> req .-connection .-encrypted))}
         routes (get-routes dproxy)
-        route (route-for-uri routes uri)]
+        route (route-for-url routes url)]
+    (.log js/console req)
+    (.log js/console (-> req .-connection .-protocol))
+    (.log js/console (-> req .-connection .-encrypted))
+    (.log js/console (-> req .-protocol))
+    (.log js/console (-> req .-encrypted))
     (if-not route
       (proxy-error dproxy "NOT_FOUND" req res {:code 501})
       (do

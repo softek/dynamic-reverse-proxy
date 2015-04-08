@@ -20,11 +20,12 @@
 
   :cljsbuild {
     :builds [{:id "dev"
-              :source-paths ["src"]
+              :source-paths ["src" "test"]
+              :notify-command ["npm.cmd" "test"]
               :compiler {
                 :output-to "out/dev/dynamic-proxy.js"
                 :output-dir "out/dev/"
-                :optimizations :none
+                :optimizations :simple
                 :source-map "out/dev/dynamic-proxy.js.map"
                 :pretty-print true
                 :preamble ["version.js"]

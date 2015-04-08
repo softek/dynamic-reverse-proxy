@@ -1,0 +1,1 @@
+var dynamicProxy = require("./index")();
