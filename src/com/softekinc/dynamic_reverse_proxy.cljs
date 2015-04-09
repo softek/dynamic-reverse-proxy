@@ -49,6 +49,9 @@
         (if (.test #"^/" prefix) prefix (str "/" prefix))
         (.toLowerCase prefix)))
 
+(defn normalize-path [path]
+  (.toLowerCase path))
+
 (defn parse-json-or-exception
   "returns {:parsed (.parse js/JSON json)} or {:exception ex}"
   [json]
@@ -126,7 +129,7 @@
   (proxy-error dproxy error req res {:code 500, :host (.-host req)}))
 
 (defn proxy-request [dproxy req res] 
-  (let [uri (-> req .-url js/decodeURI .toLowerCase)
+  (let [uri (-> req .-url js/decodeURI normalize-path)
         url {:path uri
              :host (-> req .-headers .-host)
              :encrypted (boolean (-> req .-connection .-encrypted))}
