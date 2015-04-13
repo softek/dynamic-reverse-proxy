@@ -3,7 +3,7 @@
             [cljs.test :as t :refer-macros [deftest testing is]]
             [com.softekinc.dynamic-reverse-proxy
               :refer [url-matches-route? normalize-prefix normalize-path
-                      route-for-url expand-route]]
+                      route-for-url expand-route longest-string-first]]
             [clojure.string :refer [blank?]]))
 
 (deftest test_normalize-prefix
@@ -18,6 +18,20 @@
   (is (= "/" (normalize-path "/")))
   (is (= "/a" (normalize-path "/a")))
   (is (= "/case" (normalize-path "/CASE"))))
+
+(deftest test_longest-string-first
+  (is (== 0 (longest-string-first "" "")))
+  (is (== 0 (longest-string-first "1" "1")))
+  (is (== 0 (longest-string-first "22" "22")))
+  (is (< 0 (longest-string-first "1" "22")))
+  (is (> 0 (longest-string-first "22" "1")))
+  ; same-length strings are compared alphabetically
+  (is (> 0 (longest-string-first "a" "b")))
+  (is (< 0 (longest-string-first "b" "a")))
+  ; put it all together
+  (is (= ["4444" "22" "bb" "A" "a" "b" "c" ""]
+         (sort-by identity longest-string-first
+          ["" "a" "b" "c" "A" "22" "bb" "4444"]))))
 
 (defn route
   ([prefix]

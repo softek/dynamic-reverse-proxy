@@ -20,8 +20,8 @@
   (let [al (.-length a)
         bl (.-length b)]
     (if (== al bl)
-     (.localeCompare b a)
-     (> al bl))))
+     (.localeCompare a b)
+     (- bl al))))
 
 (def empty-route-map
   (apply sorted-map-by longest-string-first []))
