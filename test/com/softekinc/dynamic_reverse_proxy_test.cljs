@@ -2,7 +2,8 @@
   (:require [cljs.nodejs :as nodejs]
             [cljs.test :as t :refer-macros [deftest testing is]]
             [com.softekinc.dynamic-reverse-proxy
-              :refer [url-matches-route? normalize-prefix normalize-path]]
+              :refer [url-matches-route? normalize-prefix normalize-path
+                      route-for-url expand-route]]
             [clojure.string :refer [blank?]]))
 
 (deftest test_normalize-prefix
@@ -26,9 +27,6 @@
   (clj->js
     (apply assoc {:prefix (normalize-prefix prefix)} kvs))))
 
-(defn any-host-route [prefix]
-  (route prefix))
-
 (defn http-url [path & kvs]
   (apply
     assoc
@@ -39,25 +37,35 @@
 
 (deftest test_url-matches-route?
   (testing "Route matches if prefix matches at start of uri"
-    (is (not (url-matches-route? (http-url "/") (any-host-route "/a"))))
-    (is (url-matches-route? (http-url "/") (any-host-route "/")))
-    (is (url-matches-route? (http-url "/a") (any-host-route "/")))
+    (is (not (url-matches-route? (http-url "/") (route "/a"))))
+    (is (url-matches-route? (http-url "/") (route "/")))
+    (is (url-matches-route? (http-url "/a") (route "/")))
     ;; normalization trims the trailing / from route, making the / optional
-    (is (url-matches-route? (http-url "/some/page") (any-host-route "/some/page/")))
-    (is (url-matches-route? (http-url "/SOme/page") (any-host-route "/soME/page/")))
-    (is (url-matches-route? (http-url "/some/page?p=1") (any-host-route "/some/page/"))))
+    (is (url-matches-route? (http-url "/some/page") (route "/some/page/")))
+    (is (url-matches-route? (http-url "/SOme/page") (route "/soME/page/")))
+    (is (url-matches-route? (http-url "/some/page?p=1") (route "/some/page/")))))
 
-  (testing "The url host must match, if specified in the route"
-    ;; same host
-    (is (url-matches-route? (http-url "/" :host "right") (route "/" :host "right")))
-    (is (url-matches-route? (http-url "/a" :host "right") (route "/" :host "right")))
-    ;; same host, different case
-    (is (url-matches-route? (http-url "/" :host "RIGHT") (route "/" :host "right")))
-    (is (url-matches-route? (http-url "/a" :host "RIGHT") (route "/" :host "right")))
-    (is (not (url-matches-route? (http-url "/other/page") (route "/some/page" :host "RIGHT"))))
-    ;; different host
-    (is (not (url-matches-route? (http-url "/" :host "wrong") (route "/a" :host "right"))))
-    (is (not (url-matches-route? (http-url "/" :host "wrong") (route "/" :host "right"))))
-    (is (not (url-matches-route? (http-url "/a" :host "wrong") (route "/" :host "right"))))))
+(deftest test_route-for-url
+  (testing "route-for-url returns first matching route. (The sequence of routes matters!)"
+    (is (= nil (route-for-url [] (http-url "/"))))
+    (is (= nil (route-for-url [(route "/deeper")] (http-url "/"))))
+    (is (let [root-route (route "/")]
+          (= root-route
+             (route-for-url [(route "/deeper/still")
+                             root-route
+                             (route "/deeper")]
+                            (http-url "/deeper")))))))
+
+(deftest test_expand-routes
+  (testing "When host-names aren't specified, yield 1 route that applies to any host"
+    (let [js-route #js {:prefix "/", :host "localhost"}]
+      (is (= [{:prefix "/", :req-host-name :any, :route js-route}]
+             (expand-route js-route)))))
+  (testing "When host-names are specified, yield a route for each"
+    (let [js-route #js {:prefix "/", :host "localhost", :reqHostNames #js ["api.example.com" "v1.api.example.com"]}]
+      (is (= [{:prefix "/", :req-host-name "api.example.com", :route js-route}
+              {:prefix "/", :req-host-name "v1.api.example.com", :route js-route}]
+             (expand-route js-route))))))
+
 
 (t/run-tests)
