@@ -12,8 +12,8 @@ A reverse proxy built on [http-proxy](https://github.com/nodejitsu/node-http-pro
 
 `npm install dynamic-reverse-proxy`
 
-##### Latest unstable release: 0.7.0-alpha2
-`npm install dynamic-reverse-proxy@0.7.0-alpha2`
+##### Latest unstable release: 0.7.0-alpha3
+`npm install dynamic-reverse-proxy@0.7.0-alpha3`
 
 ## Starting the server
 

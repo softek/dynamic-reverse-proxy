@@ -15,7 +15,7 @@
     }
   ],
   "license": "MIT",
-  "version": "0.7.0-alpha2",
+  "version": "0.7.0-alpha3",
   "scripts": {
     "test": "node test.js",
     "prepublish": "lein build-release & keybase dir sign"

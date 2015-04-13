@@ -1,4 +1,4 @@
-(defproject dynamic-reverse-proxy "0.7.0-alpha2"
+(defproject dynamic-reverse-proxy "0.7.0-alpha3"
   :description "Dynamic reverse proxy"
   :url "http://github.com/softek/dynamic-reverse-proxy"
 
